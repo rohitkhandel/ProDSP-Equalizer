@@ -5,6 +5,7 @@ import android.content.Context
 import android.net.Uri
 import androidx.media3.common.MediaItem
 import androidx.media3.exoplayer.ExoPlayer
+import androidx.media3.exoplayer.analytics.AnalyticsListener
 
 class MusicPlayerEngine(context: Context) {
 
@@ -12,17 +13,38 @@ class MusicPlayerEngine(context: Context) {
         context.applicationContext
     ).build()
 
-    val audioSessionId: Int
-        get() = player.audioSessionId
+    private var dspEngine: AudioDspEngine? = null
+
+    init {
+        player.addAnalyticsListener(
+            object : AnalyticsListener {
+                override fun onAudioSessionIdChanged(
+                    eventTime: AnalyticsListener.EventTime,
+                    audioSessionId: Int
+                ) {
+                    dspEngine?.release()
+                    dspEngine = null
+
+                    if (audioSessionId > 0) {
+                        try {
+                            dspEngine = AudioDspEngine(audioSessionId)
+                        } catch (e: Exception) {
+                            dspEngine = null
+                        }
+                    }
+                }
+            }
+        )
+    }
 
     val isPlaying: Boolean
         get() = player.isPlaying
 
-    val duration: Long
-        get() = player.duration
-
     val currentPosition: Long
         get() = player.currentPosition
+
+    val duration: Long
+        get() = player.duration
 
     fun play(uri: Uri) {
         player.setMediaItem(MediaItem.fromUri(uri))
@@ -46,7 +68,28 @@ class MusicPlayerEngine(context: Context) {
         player.volume = volume.coerceIn(0f, 1f)
     }
 
+    fun setEqualizerBand(
+        frequencyHz: Int,
+        gainDb: Float
+    ) {
+        dspEngine?.setBandGain(frequencyHz, gainDb)
+    }
+
+    fun setBassBoost(percent: Int) {
+        dspEngine?.setBassStrength(percent)
+    }
+
+    fun setEqualizerEnabled(enabled: Boolean) {
+        dspEngine?.enableEqualizer(enabled)
+    }
+
+    fun setBassBoostEnabled(enabled: Boolean) {
+        dspEngine?.enableBassBoost(enabled)
+    }
+
     fun release() {
+        dspEngine?.release()
+        dspEngine = null
         player.release()
     }
 }
