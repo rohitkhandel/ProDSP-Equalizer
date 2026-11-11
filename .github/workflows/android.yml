@@ -40,7 +40,7 @@ jobs:
           gradle-version: 8.9
 
       - name: Build APK
-        run: gradle assembleDebug --stacktrace
+        run: gradle assembleDebug --info --stacktrace
 
       - name: Upload APK
         uses: actions/upload-artifact@v4
