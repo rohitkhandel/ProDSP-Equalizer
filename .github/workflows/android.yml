@@ -30,13 +30,17 @@ jobs:
             "platforms;android-35" \
             "build-tools;35.0.0"
 
+      - name: Validate Android Manifest
+        run: |
+          python3 -c "import xml.etree.ElementTree as ET; ET.parse('app/src/main/AndroidManifest.xml'); print('Manifest XML syntax OK')"
+
       - name: Setup Gradle
         uses: gradle/actions/setup-gradle@v4
         with:
           gradle-version: 8.9
 
       - name: Build APK
-        run: gradle assembleDebug
+        run: gradle assembleDebug --stacktrace
 
       - name: Upload APK
         uses: actions/upload-artifact@v4
