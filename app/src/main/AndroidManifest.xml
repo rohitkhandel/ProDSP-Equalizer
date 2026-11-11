@@ -3,17 +3,19 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
 
     <uses-permission android:name="android.permission.READ_MEDIA_AUDIO" />
-    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"
+
+    <uses-permission
+        android:name="android.permission.READ_EXTERNAL_STORAGE"
         android:maxSdkVersion="32" />
 
     <application
         android:allowBackup="true"
         android:label="ProDSP Equalizer"
-        android:theme="@android:style/Theme.Material.Light.NoActionBar"
-        android:supportsRtl="true">
+        android:supportsRtl="true"
+        android:theme="@android:style/Theme.Material.Light.NoActionBar">
 
         <activity
-            android:name=".MainActivity"
+            android:name="com.prodsp.equalizer.MainActivity"
             android:exported="true">
 
             <intent-filter>
@@ -24,4 +26,5 @@
         </activity>
 
     </application>
+
 </manifest>
