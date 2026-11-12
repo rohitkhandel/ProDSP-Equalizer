@@ -1,9 +1,10 @@
-
 name: ProDSP Android APK Build
 
 on:
   push:
-    branches: [main]
+    branches:
+      - main
+      - 'agent/**'
   workflow_dispatch:
 
 jobs:
